@@ -5,6 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ri's blog</title>
   <style>
+    #flipPhone {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: black;
+  border: 3px solid hotpink;
+  border-radius: 20px;
+  padding: 20px;
+  color: white;
+  font-family: monospace;
+  font-size: 14px;
+  z-index: 9999;
+  transition: transform 0.4s ease-in-out;
+  text-align: center;
+}
+#flipPhone.open {
+  transform: translate(-50%, -50%) scale(1);
+}
+
     body {
       background: linear-gradient(to bottom, #1e1e1e, #2c003e);
       color: #fff0f5;
@@ -12,6 +32,35 @@
       margin: 0;
       padding: 0;
     }
+<style>
+  body {
+    cursor: url('https://cur.cursors-4u.net/cursors/cur-9/cur838.cur'), auto;
+  }
+</style>
+<script>
+  // ✨ Sparkle Trail
+  document.addEventListener("mousemove", function(e) {
+    let sparkle = document.createElement("div");
+    sparkle.textContent = "✧";
+    sparkle.style.position = "fixed";
+    sparkle.style.left = e.pageX + "px";
+    sparkle.style.top = e.pageY + "px";
+    sparkle.style.pointerEvents = "none";
+    sparkle.style.fontSize = "12px";
+    sparkle.style.color = "hotpink";
+    sparkle.style.opacity = 1;
+    sparkle.style.zIndex = 9999;
+    document.body.appendChild(sparkle);
+
+    let fade = setInterval(() => {
+      sparkle.style.opacity -= 0.05;
+      if (sparkle.style.opacity <= 0) {
+        sparkle.remove();
+        clearInterval(fade);
+      }
+    }, 20);
+  });
+</script>
 
     header {
       background-color: ##ffd557;
@@ -128,8 +177,53 @@
     }
   </style>
 </head>
+  @keyframes floaty {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+}
+.sparkle-bg {
+  position: fixed;
+  left: calc(100vw * var(--x));
+  bottom: -20px;
+  font-size: 1.5rem;
+  animation: floaty 12s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+  color: #ffb6c1;
+}
+  #secretComment {
+  display: none;
+  position: fixed;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111;
+  border: 2px dashed hotpink;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 9999;
+}
+
 <body>
-  <header>
+  <script>
+  setInterval(() => {
+    const sparkle = document.createElement("div");
+    sparkle.className = "sparkle-bg";
+    sparkle.textContent = ["★", "✦", "♡", "✧", "☁"][Math.floor(Math.random() * 5)];
+    sparkle.style.setProperty('--x', Math.random());
+    document.body.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 12000);
+  }, 1000);
+</script>
+
+  <audio id="twinkle" src="https://cdn.pixabay.com/audio/2022/03/15/audio_b7ce0e1971.mp3"></audio>
+ <p id="typewriter"></p> <header>
+    <script>
+  document.querySelector("header").addEventListener("click", () => {
+    document.getElementById("twinkle").play();
+  });
+</script>
     <h1>ri</h1>
     <p>rambling on</p>
     <nav>
@@ -137,6 +231,92 @@
       <a href="#">about</a>
       <a href="#">archive</a>
     </nav>
+   <script>
+  const quote = "rambling on";
+  let i = 0;
+  function typeItOut() {
+    if (i < quote.length) {
+      document.getElementById("typewriter").textContent += quote.charAt(i);
+      i++;
+      setTimeout(typeItOut, 100);
+    }
+  }
+  window.onload = typeItOut;
+</script>
+<script>
+  let buffer = "";
+  document.addEventListener("keydown", function(e) {
+    buffer += e.key.toLowerCase();
+    if (buffer.includes("diary")) {
+      const secret = document.createElement("div");
+      secret.className = "post";
+      secret.innerHTML = `
+        <h2 class="editable">🧸 diary unlocked</h2>
+        <p class="editable">you found the secret post. this one’s just for me. you know too much. 💌</p>
+      `;
+      document.getElementById("postContainer").prepend(secret);
+      buffer = "";
+    }
+    if (buffer.length > 10) buffer = buffer.slice(-10);
+  });
+</script>
+<div id="tamagotchi" style="
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 10000;
+  font-size: 30px;
+  cursor: pointer;">
+  🐣
+</div>
+
+<script>
+  const tama = document.getElementById("tamagotchi");
+  const moods = ["🐣", "😴", "💀", "😍", "😡", "😎", "😭"];
+  let moodIndex = 0;
+
+  function cycleMood() {
+    moodIndex = (moodIndex + 1) % moods.length;
+    tama.textContent = moods[moodIndex];
+  }
+
+  document.addEventListener("keydown", () => {
+    cycleMood();
+  });
+
+  tama.addEventListener("click", () => {
+    alert("you clicked your tamagotchi. it noticed.");
+    cycleMood();
+  });
+</script>
+<div id="flipPhone">
+  📞 *beep* hello? yeah... i still miss them.
+</div>
+
+<script>
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "*") {
+      const flip = document.getElementById("flipPhone");
+      flip.classList.toggle("open");
+    }
+  });
+</script>
+   <div id="secretComment">
+  <p>post a sad lyric:</p>
+  <input type="text" placeholder="ex: nobody likes me, let's just die" style="width: 100%; padding: 5px;">
+</div>
+
+<script>
+  let lyricsMode = false;
+  document.addEventListener("keydown", (e) => {
+    if (e.key.toLowerCase() === "s") {
+      lyricsMode = !lyricsMode;
+      document.getElementById("secretComment").style.display = lyricsMode ? "block" : "none";
+    }
+  });
+</script>
+
+
   </header>
 
   <div class="button-row">
