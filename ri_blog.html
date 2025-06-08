@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ri's blog</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom, #1e1e1e, #2c003e);
+      color: #fff0f5;
+      font-family: Century, cursive, Times New Roman;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: ##ffd557;
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+      box-shadow: 0 0 15px hotpink;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      margin: 0;
+      text-transform: lowercase;
+      letter-spacing: 2px;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    nav {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    nav a {
+      color: #ffccff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-shadow: 0 0 5px #ff69b4;
+    }
+
+    .button-row {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+
+    button {
+      margin: 0.5rem;
+      padding: 0.5rem 1.5rem;
+      background-color: hotpink;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff69b4;
+    }
+
+    button:hover {
+      background-color: #ff1493;
+    }
+
+    main {
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    .post {
+      background: rgba(255, 255, 255, 0.07);
+      border: 2px dashed #ff69b4;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 15px rgba(255, 105, 180, 0.3);
+    }
+
+    .post h2 {
+      margin-top: 0;
+      color: #ffb6c1;
+      text-transform: lowercase;
+    }
+
+    .post p {
+      line-height: 1.6;
+    }
+
+    .editable {
+      outline: none;
+      transition: background 0.3s ease;
+    }
+
+    .editable:focus {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #2c003e;
+      color: #dda0dd;
+      font-size: 0.9rem;
+      border-top: 2px dotted #ff69b4;
+    }
+
+    .social {
+      margin-top: 0.5rem;
+    }
+
+    .social a {
+      color: #ffccff;
+      text-decoration: none;
+    }
+
+    .social a:hover {
+      text-shadow: 0 0 5px violet;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ri</h1>
+    <p>rambling on</p>
+    <nav>
+      <a href="#">home</a>
+      <a href="#">about</a>
+      <a href="#">archive</a>
+    </nav>
+  </header>
+
+  <div class="button-row">
+    <button id="editToggle">🔓 enter edit mode</button>
+    <button id="addPost">➕ new post</button>
+  </div>
+
+  <main id="postContainer">
+    <!-- Posts will be loaded/saved here -->
+  </main>
+
+  <footer>
+    <div class="social">
+      ig: <a href="https://instagram.com/obsessed_wit.me" target="_blank">@obsessed_wit.me</a>
+    </div>
+    <p>made with glitter & angst ✿</p>
+  </footer>
+
+  <script>
+    const password = "pinkstar"; // <--- Change your password here 💕
+
+    const editButton = document.getElementById("editToggle");
+    const addPostButton = document.getElementById("addPost");
+    const container = document.getElementById("postContainer");
+
+    let isEditMode = false;
+
+    // Load posts from localStorage
+    function loadPosts() {
+      const saved = localStorage.getItem("ri_blog_posts");
+      container.innerHTML = saved ? saved : defaultPosts();
+      updateEditableState();
+    }
+
+    // Default post content
+    function defaultPosts() {
+      return `
+        <div class="post">
+          <h2 class="editable">hello there</h2>
+          <p class="editable">
+            welcome humans! 
+this is just kinda random, don’t really know what this is gonna be. no dreams, just living. 
+            anyway, if you're reading this, ily already.
+          </p>
+        </div>
+
+        <div class="post">
+          <h2 class="editable">⭐️ playlist of the week ⭐️</h2>
+          <p class="editable">
+            • teenage dirtbag – wheatus<br>
+            • sk8er boi – avril<br>
+            • just a girl – no doubt<br>
+            • misery business – paramore<br>
+            • complicated – avril again oops
+          </p>
+        </div>`;
+    }
+
+    // Save current blog to localStorage
+    function savePosts() {
+      localStorage.setItem("ri_blog_posts", container.innerHTML);
+    }
+
+    // Toggle edit mode
+    editButton.addEventListener("click", () => {
+      const input = prompt("enter your secret password 🌙");
+
+      if (input === password) {
+        isEditMode = !isEditMode;
+        updateEditableState();
+        editButton.textContent = isEditMode ? "🔒 exit edit mode" : "🔓 enter edit mode";
+      } else {
+        alert("nahhh that's not it 💔");
+      }
+    });
+
+    // Set contentEditable for all editable elements
+    function updateEditableState() {
+      const editables = container.querySelectorAll(".editable");
+      editables.forEach(el => {
+        el.contentEditable = isEditMode;
+        if (isEditMode) {
+          el.addEventListener("input", savePosts);
+        } else {
+          el.removeEventListener("input", savePosts);
+        }
+      });
+    }
+
+    // Add new post
+    addPostButton.addEventListener("click", () => {
+      if (!isEditMode) {
+        alert("you gotta unlock edit mode first 🗝️");
+        return;
+      }
+
+      const newPost = document.createElement("div");
+      newPost.className = "post";
+      newPost.innerHTML = `
+        <h2 class="editable" contenteditable="true">new title...</h2>
+        <p class="editable" contenteditable="true">write something here...</p>
+      `;
+      container.prepend(newPost);
+      updateEditableState();
+      savePosts();
+    });
+
+    // On page load
+    loadPosts();
+  </script>
+</body>
+</html>
